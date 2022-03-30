@@ -8,11 +8,15 @@ var factory = new ConnectionFactory();
 factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
 using var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
-//channel.QueueDeclare("hello-queue", true, false, false);
+
+var randomQueueName = channel.QueueDeclare().QueueName;
+channel.QueueBind(randomQueueName,"logs-fanout","",null);
 
 channel.BasicQos(0, 1, false);
 var consumer = new EventingBasicConsumer(channel);
-channel.BasicConsume("work-queue", false, consumer);
+channel.BasicConsume(randomQueueName, false, consumer);
+
+Console.WriteLine("Loglar dinleniyor...");
 
 consumer.Received += (_, e) =>
 {
