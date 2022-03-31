@@ -8,17 +8,36 @@ factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
 using var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
 
-channel.ExchangeDeclare("logs-fanout", durable: true, type: ExchangeType.Fanout);
+channel.ExchangeDeclare("logs-direct", durable: true, type: ExchangeType.Direct);
 
+Enum.GetNames(typeof(LogNames)).ToList().ForEach(x =>
+{
+    var routeKey = $"route-{x}";
+    var queueName = $"direct-queue-{x}";
+    channel.QueueDeclare(queueName, true, false, false, null);
+    channel.QueueBind(queueName, "logs-direct", routeKey, null);
+});
 
 Enumerable.Range(1, 50).ToList().ForEach(x =>
 {
-    string log = $"log {x}";
-    var messageBody = Encoding.UTF8.GetBytes(log);
+    LogNames log = (LogNames) new Random().Next(1, 5);
 
-    channel.BasicPublish("logs-fanout", "", null, messageBody);
+    string logMessage = $"log-type: {log}";
+    var messageBody = Encoding.UTF8.GetBytes(logMessage);
+    var routeKey = $"route-{log}";
 
-    Console.WriteLine($"Mesaj gönderildi: {log}");
+    channel.BasicPublish("logs-direct", routeKey, null, messageBody);
+
+    Console.WriteLine($"Log gönderildi: {logMessage}");
 });
 
 Console.ReadLine();
+
+
+public enum LogNames
+{
+    Critical = 1,
+    Error = 2,
+    Warning = 3,
+    Info = 4
+}
