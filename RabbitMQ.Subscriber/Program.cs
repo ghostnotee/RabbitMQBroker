@@ -9,9 +9,15 @@ factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
 using var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
 
-channel.BasicQos(0,1,false);
+channel.ExchangeDeclare("logs-topic", durable: true, type: ExchangeType.Topic);
+channel.BasicQos(0, 1, false);
 var consumer = new EventingBasicConsumer(channel);
-var queueName = "direct-queue-Error";
+
+var queueName = channel.QueueDeclare().QueueName;
+//var routeKey = "Critical.#";
+var routekey = "*.Error.*";
+channel.QueueBind(queueName, "logs-topic",routekey);
+
 channel.BasicConsume(queueName, false, consumer);
 
 Console.WriteLine("Loglar dinleniyor...");
