@@ -139,3 +139,75 @@ Subscriber;
 var queueName = "direct-queue-Error";
 channel.BasicConsume(queueName, false, consumer);
 ```
+
+**Topic Exchange:** Wilcard (Joker Karakter) ler ile routingKey yapılandırdığımız / grupladığımız exchange türü.
+
+**a.*.*.d** → route key’in başında a ve sonunda d olanları dinlemek için
+
+***.*.c.*** → route key’in üçüncü sırasında c olanları dinlemek için.
+
+**a.# →** route key’in başında a olan ve gerisiyle ilgilenmediğim kuyrukları dinlemek için
+
+**#.d →** yukarıdakinin tam tersi başıyla ortasıyla ilgilenmeyip sonuyla ilgilendiğimiz senaryolar
+
+Publisher;
+
+```csharp
+channel.ExchangeDeclare("logs-topic", durable: true, type: ExchangeType.Topic);
+
+Random rnd = new Random();
+Enumerable.Range(1, 50).ToList().ForEach(x =>
+{
+    LogNames log1 = (LogNames) rnd.Next(1, 5);
+    LogNames log2 = (LogNames) rnd.Next(1, 5);
+    LogNames log3 = (LogNames) rnd.Next(1, 5);
+
+    var routeKey = $"{log1}.{log2}.{log3}";
+    string message = $"log-type: {log1}.{log2}.{log3}";
+    var messageBody = Encoding.UTF8.GetBytes(message);
+
+    channel.BasicPublish("logs-topic", routeKey, null, messageBody);
+
+    Console.WriteLine($"Log gönderildi: {message}");
+});
+```
+
+Consumer;
+
+```csharp
+channel.ExchangeDeclare("logs-topic", durable: true, type: ExchangeType.Topic);
+
+var queueName = channel.QueueDeclare().QueueName;
+var routekey = "*.Error.*";
+channel.QueueBind(queueName, "logs-topic",routekey);
+```
+
+**Header Exchange:** Mesajın header’ında key value şeklinde routelama yapılıyor. Subscriber’da all hepsi eşleşsin. any herhangi biri eşleşsin.
+
+```csharp
+// Puplisher
+channel.ExchangeDeclare("headers-exchange", durable: true, type: ExchangeType.Headers);
+
+Dictionary<string, object> headers = new Dictionary<string, object>();
+headers.Add("format", "pdf");
+headers.Add("shape", "a4");
+
+var properties = channel.CreateBasicProperties();
+properties.Headers = headers;
+
+channel.BasicPublish("headers-exchange", string.Empty, properties,
+    Encoding.UTF8.GetBytes("Benim güzel Header mesajım"));
+
+//Consumer;
+channel.ExchangeDeclare("headers-exchange", durable: true, type: ExchangeType.Headers);
+...
+Dictionary<string, object> headers = new Dictionary<string, object>
+{
+    {"format", "pdf"},
+    {"shape", "a4"},
+    {"x-match", "all"}
+};
+
+channel.QueueBind(queueName, "headers-exchange",String.Empty,headers);
+```
+
