@@ -8,31 +8,17 @@ factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
 using var connection = factory.CreateConnection();
 var channel = connection.CreateModel();
 
-channel.ExchangeDeclare("logs-topic", durable: true, type: ExchangeType.Topic);
+channel.ExchangeDeclare("headers-exchange", durable: true, type: ExchangeType.Headers);
 
-Random rnd = new Random();
-Enumerable.Range(1, 50).ToList().ForEach(x =>
-{
-    LogNames log1 = (LogNames) rnd.Next(1, 5);
-    LogNames log2 = (LogNames) rnd.Next(1, 5);
-    LogNames log3 = (LogNames) rnd.Next(1, 5);
+Dictionary<string, object> headers = new Dictionary<string, object>();
+headers.Add("format", "pdf");
+headers.Add("shape", "a4");
 
-    var routeKey = $"{log1}.{log2}.{log3}";
-    string message = $"log-type: {log1}.{log2}.{log3}";
-    var messageBody = Encoding.UTF8.GetBytes(message);
+var properties = channel.CreateBasicProperties();
+properties.Headers = headers;
 
-    channel.BasicPublish("logs-topic", routeKey, null, messageBody);
+channel.BasicPublish("headers-exchange", string.Empty, properties,
+    Encoding.UTF8.GetBytes("Benim güzel Header mesajım"));
 
-    Console.WriteLine($"Log gönderildi: {message}");
-});
-
+Console.WriteLine("Mesaj gönderilmiştir...");
 Console.ReadLine();
-
-
-public enum LogNames
-{
-    Critical = 1,
-    Error = 2,
-    Warning = 3,
-    Info = 4
-}
