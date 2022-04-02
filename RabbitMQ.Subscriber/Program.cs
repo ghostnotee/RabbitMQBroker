@@ -1,8 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Text;
+using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Shared;
 
 var factory = new ConnectionFactory();
 factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
@@ -22,7 +24,7 @@ Dictionary<string, object> headers = new Dictionary<string, object>
     {"x-match", "all"}
 };
 
-channel.QueueBind(queueName, "headers-exchange",String.Empty,headers);
+channel.QueueBind(queueName, "headers-exchange", String.Empty, headers);
 
 channel.BasicConsume(queueName, false, consumer);
 
@@ -31,8 +33,9 @@ Console.WriteLine("Loglar dinleniyor...");
 consumer.Received += (_, e) =>
 {
     var message = Encoding.UTF8.GetString(e.Body.ToArray());
+    Product product = JsonSerializer.Deserialize<Product>(message);
     Thread.Sleep(500);
-    Console.WriteLine("Gelen mesaj: " + message);
+    Console.WriteLine($"Gelen mesaj: {product.Id} {product.Name} {product.Price} {product.Stock} ");    
     channel.BasicAck(e.DeliveryTag, false);
 };
 
