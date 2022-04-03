@@ -11,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options => { options.UseInMemoryData
 builder.Services.AddSingleton(sp => new ConnectionFactory()
     {Uri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ"))});
 builder.Services.AddSingleton<RabbitMQClientService>();
+builder.Services.AddSingleton<RabbitMQPublisher>();
 
 var app = builder.Build();
 
