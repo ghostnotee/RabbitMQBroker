@@ -61,7 +61,7 @@ namespace RabbitMQWeb.WaterMark.Controllers
             if (ImageFile is {Length: > 0})
             {
                 var randomImageName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", randomImageName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", randomImageName);
                 await using FileStream stream = new(path, FileMode.Create);
                 await ImageFile.CopyToAsync(stream);
                 _rabbitMqPublisher.Publish(new productImageCreatedEvent() {ImageName = randomImageName});
