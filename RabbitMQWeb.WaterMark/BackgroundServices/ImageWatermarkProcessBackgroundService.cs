@@ -1,9 +1,11 @@
-using System.Drawing;
 using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQWeb.WaterMark.Services;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace RabbitMQWeb.WaterMark.BackgroundServices;
 
@@ -31,12 +33,13 @@ public class ImageWatermarkProcessBackgroundService : BackgroundService
     {
         var consumer = new AsyncEventingBasicConsumer(_channel);
         _channel.BasicConsume(RabbitMQClientService.QueueName, false, consumer);
-        consumer.Received += ConsumerOnReceived;
+        consumer.Received += Consumer_Received;
         return Task.CompletedTask;
     }
 
-    private Task ConsumerOnReceived(object sender, BasicDeliverEventArgs @event)
+    private Task Consumer_Received(object sender, BasicDeliverEventArgs @event)
     {
+        Task.Delay(10000).Wait();
         try
         {
             var productImageCreatedEvent =
@@ -44,28 +47,21 @@ public class ImageWatermarkProcessBackgroundService : BackgroundService
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images",
                 productImageCreatedEvent.ImageName);
             var siteName = "www.ghostNote.com";
-            using var image = Image.FromFile(path);
-            using var graphic = Graphics.FromImage(image);
-            var font = new Font(FontFamily.GenericMonospace, 32, FontStyle.Bold, GraphicsUnit.Pixel);
-            var textSize = graphic.MeasureString(siteName, font);
-            var color = Color.FromArgb(128, 255, 255, 255);
-            var brush = new SolidBrush(color);
-            var position = new Point(image.Width - ((int) textSize.Width + 30),
-                image.Height - ((int) textSize.Height + 30));
 
-            graphic.DrawString(siteName, font, brush, position);
-            image.Save(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "watermarks",
+            using Image image = Image.Load(path);
+            Font font = SystemFonts.CreateFont("Arial", 10);
+            using var image2 = image.Clone(ctx => ctx.ApplyScalingWaterMark(font, siteName, Color.WhiteSmoke, 5));
+            image2.Save(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "watermarks",
                 productImageCreatedEvent.ImageName));
 
-            image.Dispose();
-            graphic.Dispose();
-            
-            _channel.BasicAck(@event.DeliveryTag,false);
+            _logger.LogInformation($"received message : {productImageCreatedEvent}");
+            _channel.BasicAck(@event.DeliveryTag, false);
         }
         catch (Exception e)
         {
-            throw;
+            _logger.LogError(e.Message);
         }
+
 
         return Task.CompletedTask;
     }

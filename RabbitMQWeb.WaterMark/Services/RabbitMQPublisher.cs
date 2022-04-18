@@ -20,7 +20,8 @@ public class RabbitMQPublisher
         var messageBodyByte = Encoding.UTF8.GetBytes(messageBodyString);
         var properties = channel.CreateBasicProperties();
         properties.Persistent = true;
-        channel.BasicPublish(RabbitMQClientService.ExchangeName, RabbitMQClientService.RoutingWatermark, properties,
-            messageBodyByte);
+        channel.BasicPublish(exchange: RabbitMQClientService.ExchangeName,
+            routingKey: RabbitMQClientService.RoutingWatermark, basicProperties: properties,
+            body: messageBodyByte);
     }
 }

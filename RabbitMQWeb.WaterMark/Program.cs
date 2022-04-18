@@ -7,13 +7,13 @@ using RabbitMQWeb.WaterMark.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<AppDbContext>(options => { options.UseInMemoryDatabase(databaseName: "productDb"); });
 builder.Services.AddSingleton(sp => new ConnectionFactory()
     {Uri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ"))});
 builder.Services.AddSingleton<RabbitMQClientService>();
 builder.Services.AddSingleton<RabbitMQPublisher>();
+builder.Services.AddDbContext<AppDbContext>(options => { options.UseInMemoryDatabase(databaseName: "productDb"); });
 builder.Services.AddHostedService<ImageWatermarkProcessBackgroundService>();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
