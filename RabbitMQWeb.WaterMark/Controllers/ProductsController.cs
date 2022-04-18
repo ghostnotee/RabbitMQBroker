@@ -61,6 +61,8 @@ namespace RabbitMQWeb.WaterMark.Controllers
             if (ImageFile is {Length: > 0})
             {
                 var randomImageName = Guid.NewGuid() + Path.GetExtension(ImageFile.FileName);
+                if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images")))
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images"));
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", randomImageName);
                 await using FileStream stream = new(path, FileMode.Create);
                 await ImageFile.CopyToAsync(stream);
