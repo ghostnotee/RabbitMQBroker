@@ -1,6 +1,5 @@
 # RabbitMQBroker
 RabbitMQ HelloWorld
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/efc259b3-6c30-4103-b262-51cb9ac33fc2/Untitled.png)
 
 [https://www.cloudamqp.com/](https://www.cloudamqp.com/) (Online RabbitMQ servisi.)
 
@@ -8,9 +7,9 @@ RabbitMQ HelloWorld
 docker run -d --hostname my-rabbit --name rabbitmqcontainer -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-Watermark ekleme için ImageSharp kullanılacak.
+Watermark ekleme için ImageSharp kullanıldı.
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e342b0f9-8323-4db6-8ee1-b3941447afa7/Untitled.png)
+
 
 RabbitMQ bir mesaj kuyruğu sistemidir. Benzerleri Apache Kafka, Msmq, Microsoft Azure Service Bus, Kestrel, ActiveMQ olarak sıralanabilir. Amacı herhangi bir kaynaktan alınan bir mesajın, bir başka kaynağa sırası geldiği anda iletilmesidir. Mantık olarak Redis Pub/Sub’a benzemektedir. Ama burada yapılacak işler bir sıraya alınmaktadır. Yani iletimin yapılacağı kaynak ayağa kalkana kadar, tüm işlemler bir quee’de sıralanabilir. Fakat aynı durum Redis Pub’Sub için geçerli değildir. RabbitMQ çoklu işletim sistemine destek vermesi ve açık kaynak kodlu olması da en büyük tercih sebeplerinden birisidir.
 
