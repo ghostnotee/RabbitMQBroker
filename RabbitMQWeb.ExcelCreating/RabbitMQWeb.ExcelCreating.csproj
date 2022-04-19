@@ -22,4 +22,8 @@
       <AdditionalFiles Include="Views\Account\Login.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\files" />
+    </ItemGroup>
+
 </Project>
