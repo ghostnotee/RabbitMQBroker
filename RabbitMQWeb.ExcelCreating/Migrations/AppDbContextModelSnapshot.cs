@@ -236,7 +236,6 @@ namespace RabbitMQWeb.ExcelCreating.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FileStatus")

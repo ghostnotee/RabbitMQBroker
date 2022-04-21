@@ -1,0 +1,29 @@
+@model System.Collections.Generic.List<RabbitMQWeb.ExcelCreating.Models.UserFile>
+
+@{
+    ViewBag.Title = "Files";
+    Layout = "_Layout";
+}
+
+<h2>Files</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>File Name</th>
+        <th>Created Date</th>
+        <th>File Status</th>
+        <th>Download</th>
+    </tr>
+    </thead>
+    @foreach (var userFile in Model)
+    {
+        <tr>
+            <td>@userFile.FileName</td>
+            <td>@userFile.GetCreatedDate</td>
+            <td>@userFile.FileStatus</td>
+            <td>
+                <a href="~/files/@userFile.FilePath" class="btn btn-primary @(userFile.FileStatus == FileStatus.Creating ? "disabled" : "")">DownLoad</a>
+            </td>
+        </tr>
+    }
+</table>
