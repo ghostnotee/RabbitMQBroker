@@ -33,9 +33,10 @@ Console.WriteLine("Loglar dinleniyor...");
 consumer.Received += (_, e) =>
 {
     var message = Encoding.UTF8.GetString(e.Body.ToArray());
-    Product product = JsonSerializer.Deserialize<Product>(message);
+    Product? product = JsonSerializer.Deserialize<Product>(message);
     Thread.Sleep(500);
-    Console.WriteLine($"Gelen mesaj: {product.Id} {product.Name} {product.Price} {product.Stock} ");    
+    if (product != null)
+        Console.WriteLine($"Gelen mesaj: {product.Id} {product.Name} {product.Price} {product.Stock} ");
     channel.BasicAck(e.DeliveryTag, false);
 };
 

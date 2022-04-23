@@ -1,5 +1,6 @@
-# RabbitMQBroker
-RabbitMQ HelloWorld
+# RabbitMQ
+
+![Untitled](RabbitMQ%2000daeb3ae4a3492bb477a6379b8cb2fb/Untitled.png)
 
 [https://www.cloudamqp.com/](https://www.cloudamqp.com/) (Online RabbitMQ servisi.)
 
@@ -7,9 +8,7 @@ RabbitMQ HelloWorld
 docker run -d --hostname my-rabbit --name rabbitmqcontainer -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-Watermark ekleme için ImageSharp kullanıldı.
-
-
+![Untitled](RabbitMQ%2000daeb3ae4a3492bb477a6379b8cb2fb/Untitled%201.png)
 
 RabbitMQ bir mesaj kuyruğu sistemidir. Benzerleri Apache Kafka, Msmq, Microsoft Azure Service Bus, Kestrel, ActiveMQ olarak sıralanabilir. Amacı herhangi bir kaynaktan alınan bir mesajın, bir başka kaynağa sırası geldiği anda iletilmesidir. Mantık olarak Redis Pub/Sub’a benzemektedir. Ama burada yapılacak işler bir sıraya alınmaktadır. Yani iletimin yapılacağı kaynak ayağa kalkana kadar, tüm işlemler bir quee’de sıralanabilir. Fakat aynı durum Redis Pub’Sub için geçerli değildir. RabbitMQ çoklu işletim sistemine destek vermesi ve açık kaynak kodlu olması da en büyük tercih sebeplerinden birisidir.
 
@@ -73,7 +72,7 @@ var consumer = new EventingBasicConsumer(channel);
 
 Consumer hangi channel i dinleyecek.
 
-parametreler: dinlenecek kuyruğun ismi, autoAck: true ise mesaj doğruda işlense yanlış da işlense kuyruktan siler, consumer:
+parametreler: dinlenecek kuyruğun ismi, autoAck: true ise mesaj doğruda işlense yanlış da işlense kuyruktan siler, consumer: 
 
 ```csharp
 channel.BasicConsume("hello-queue", true, consumer);
@@ -90,8 +89,6 @@ channel.BasicAck(eventArgs.DeliveryTag,false);
 **Exchange Türleri:**
 
 **Fanout exchange:** Burada routing key’in bir önemi yoktur. Daha çok broadcast yayınlar için uygundur. Özellikle (MMO) oyunlarda top10 güncellemeleri ve global duyurular için kullanılır. Yine real-time spor haberleri gibi yayınlarda fanout exchange kullanılır.
-
-![http://www.borakasmer.com/wp-content/uploads/2016/12/exchange-fanout.png](http://www.borakasmer.com/wp-content/uploads/2016/12/exchange-fanout.png)
 
 **Direct exchange:** Yapılacak işlere göre bir routing key belirlenir ve buna göre ilgili direct exchange ile amaca en uygun queue’ya gidilir.
 
@@ -212,3 +209,25 @@ Dictionary<string, object> headers = new Dictionary<string, object>
 channel.QueueBind(queueName, "headers-exchange",String.Empty,headers);
 ```
 
+**Mesajları kalıcı hale getirmek için →** oluşturduğumuz  ****properties’in Persistent özelliğini true set etmemiz gerekli.
+
+```csharp
+var properties = channel.CreateBasicProperties();
+properties.Persistent = true;
+```
+
+Complex Type’ları mesaj olarak gönderme; göderilecek nesneyi Json’a çevirerek consumera iletebiliriz ve consumer da işlemin tersini yapabiliriz.
+
+```csharp
+var product = new Product {Id = 1, Name = "Bilgisayar", Price = 21000, Stock = 35};
+var productJsonString = JsonSerializer.Serialize(product);
+
+channel.BasicPublish("headers-exchange", string.Empty, properties,
+    Encoding.UTF8.GetBytes(productJsonString));
+
+//Consumer 
+var message = Encoding.UTF8.GetString(e.Body.ToArray());
+    Product product = JsonSerializer.Deserialize<Product>(message);
+    Console.WriteLine($"Gelen mesaj: {product.Id} {product.Name} {product.Price} {product.Stock} ");    
+    channel.BasicAck(e.DeliveryTag, false);
+```
