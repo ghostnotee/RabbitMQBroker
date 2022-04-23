@@ -18,15 +18,6 @@ namespace FileCreateWorkerService.Models
 
         public virtual DbSet<Product> Products { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=localhost,1433;Database=AdventureWorks2019;User Id=sa;Password=mySuperStrong(!)Password");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>(entity =>
@@ -57,7 +48,8 @@ namespace FileCreateWorkerService.Models
                     .HasMaxLength(15)
                     .HasComment("Product color.");
 
-                entity.Property(e => e.DaysToManufacture).HasComment("Number of days required to manufacture the product.");
+                entity.Property(e => e.DaysToManufacture)
+                    .HasComment("Number of days required to manufacture the product.");
 
                 entity.Property(e => e.DiscontinuedDate)
                     .HasColumnType("datetime")
@@ -93,7 +85,8 @@ namespace FileCreateWorkerService.Models
 
                 entity.Property(e => e.ProductModelId)
                     .HasColumnName("ProductModelID")
-                    .HasComment("Product is a member of this product model. Foreign key to ProductModel.ProductModelID.");
+                    .HasComment(
+                        "Product is a member of this product model. Foreign key to ProductModel.ProductModelID.");
 
                 entity.Property(e => e.ProductNumber)
                     .HasMaxLength(25)
@@ -101,14 +94,17 @@ namespace FileCreateWorkerService.Models
 
                 entity.Property(e => e.ProductSubcategoryId)
                     .HasColumnName("ProductSubcategoryID")
-                    .HasComment("Product is a member of this product subcategory. Foreign key to ProductSubCategory.ProductSubCategoryID. ");
+                    .HasComment(
+                        "Product is a member of this product subcategory. Foreign key to ProductSubCategory.ProductSubCategoryID. ");
 
-                entity.Property(e => e.ReorderPoint).HasComment("Inventory level that triggers a purchase order or work order. ");
+                entity.Property(e => e.ReorderPoint)
+                    .HasComment("Inventory level that triggers a purchase order or work order. ");
 
                 entity.Property(e => e.Rowguid)
                     .HasColumnName("rowguid")
                     .HasDefaultValueSql("(newid())")
-                    .HasComment("ROWGUIDCOL number uniquely identifying the record. Used to support a merge replication sample.");
+                    .HasComment(
+                        "ROWGUIDCOL number uniquely identifying the record. Used to support a merge replication sample.");
 
                 entity.Property(e => e.SafetyStockLevel).HasComment("Minimum inventory quantity. ");
 
