@@ -14,7 +14,8 @@ namespace RabbitMQWeb.ExcelCreating.Controllers
         private readonly AppDbContext _context;
         private readonly RabbitMqPublisher _rabbitMqPublisher;
 
-        public ProductController(UserManager<IdentityUser> userManager, AppDbContext context, RabbitMqPublisher rabbitMqPublisher)
+        public ProductController(UserManager<IdentityUser> userManager, AppDbContext context,
+            RabbitMqPublisher rabbitMqPublisher)
         {
             _userManager = userManager;
             _context = context;
@@ -49,7 +50,8 @@ namespace RabbitMQWeb.ExcelCreating.Controllers
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            return View(await _context.UserFiles.Where(uF => uF.UserId == user.Id).ToListAsync());
+            return View(await _context.UserFiles.Where(uF => uF.UserId == user.Id)
+                .OrderByDescending(uF => uF.Id).ToListAsync());
         }
     }
 }
