@@ -39,11 +39,7 @@ namespace RabbitMQWeb.ExcelCreating.Controllers
             };
             await _context.UserFiles.AddAsync(userFile);
             await _context.SaveChangesAsync();
-            _rabbitMqPublisher.Publish(new Shared.CreateExcelMessage()
-            {
-                FileId = userFile.Id,
-                UserId = user.Id
-            });
+            _rabbitMqPublisher.Publish(new Shared.CreateExcelMessage() {FileId = userFile.Id});
             TempData["StartCreatingExcel"] = true;
 
             return RedirectToAction(nameof(Files));

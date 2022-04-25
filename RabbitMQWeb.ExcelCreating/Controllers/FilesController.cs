@@ -9,10 +9,12 @@ namespace RabbitMQWeb.ExcelCreating.Controllers
     public class FilesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public FilesController(AppDbContext context)
+        public FilesController(AppDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         [HttpPost]
@@ -31,7 +33,6 @@ namespace RabbitMQWeb.ExcelCreating.Controllers
             userFile.FileStatus = FileStatus.Completed;
 
             await _context.SaveChangesAsync();
-
             // TODO SignalR notification atılacak.
 
             return Ok();
