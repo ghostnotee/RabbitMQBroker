@@ -12,8 +12,8 @@ using RabbitMQWeb.ExcelCreating.Models;
 namespace RabbitMQWeb.ExcelCreating.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220418201926_initialMigration")]
-    partial class initialMigration
+    [Migration("20220424131758_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -238,7 +238,6 @@ namespace RabbitMQWeb.ExcelCreating.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FileStatus")

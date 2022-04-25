@@ -453,3 +453,4 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 RabbitMQWeb.WaterMark/wwwroot/images/*
+RabbitMQWeb.ExcelCreating/wwwroot/files/*

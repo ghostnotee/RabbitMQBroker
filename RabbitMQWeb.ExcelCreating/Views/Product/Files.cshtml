@@ -22,7 +22,7 @@
             <td>@userFile.GetCreatedDate</td>
             <td>@userFile.FileStatus</td>
             <td>
-                <a href="~/files/@userFile.FilePath" class="btn btn-primary @(userFile.FileStatus == FileStatus.Creating ? "disabled" : "")">DownLoad</a>
+                <a href="~/files/@(userFile.FileName+".xlsx")" class="btn btn-primary @(userFile.FileStatus == FileStatus.Creating ? "disabled" : "")">DownLoad</a>
             </td>
         </tr>
     }
