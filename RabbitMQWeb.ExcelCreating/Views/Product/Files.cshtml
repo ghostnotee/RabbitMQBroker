@@ -5,6 +5,23 @@
     Layout = "_Layout";
 }
 
+@section Scripts
+{
+    <script>
+    $(document).ready(function (){
+        var hasStartCreatingExcel= '@TempData["StartCreatingExcel"]';
+        if (hasStartCreatingExcel){
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Excel dosyası hazırlanıyor 👍🏻...️',
+                showConfirmButton: false,
+            })
+        }        
+    })
+    </script>
+}
+
 <h2>Files</h2>
 <table class="table table-striped">
     <thead>
