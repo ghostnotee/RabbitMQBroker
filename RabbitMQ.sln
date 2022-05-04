@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileCreateWorkerService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQWeb.WordToPdf", "RabbitMQWeb.WordToPdf\RabbitMQWeb.WordToPdf.csproj", "{315BC9F6-3BE5-4BB6-9695-1A0BE07953F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.WordToPdf.Consumer", "RabbitMQ.WordToPdf.Consumer\RabbitMQ.WordToPdf.Consumer.csproj", "{BF25A2EC-6A06-4936-BF94-2B00633E3DD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{315BC9F6-3BE5-4BB6-9695-1A0BE07953F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{315BC9F6-3BE5-4BB6-9695-1A0BE07953F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{315BC9F6-3BE5-4BB6-9695-1A0BE07953F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF25A2EC-6A06-4936-BF94-2B00633E3DD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF25A2EC-6A06-4936-BF94-2B00633E3DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF25A2EC-6A06-4936-BF94-2B00633E3DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF25A2EC-6A06-4936-BF94-2B00633E3DD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

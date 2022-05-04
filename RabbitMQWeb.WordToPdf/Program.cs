@@ -1,6 +1,14 @@
+using RabbitMQ.Client;
+using RabbitMQWeb.WordToPdf.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton(sp => new ConnectionFactory()
+    { Uri = new Uri(builder.Configuration.GetConnectionString("RabbitMQ")), DispatchConsumersAsync = true });
+builder.Services.AddSingleton<RabbitMqClientService>();
+builder.Services.AddSingleton<RabbitMqPublisher>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
